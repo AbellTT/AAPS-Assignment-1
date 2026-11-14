@@ -1,0 +1,85 @@
+Algorithm,Input Type,Size (n),Time (ms),Comparisons
+Insertion Sort,Random,100,0.2154,2601
+Quick Sort,Random,100,0.0831,772
+Merge Sort,Random,100,0.1436,545
+Insertion Sort,Ascending,100,0.0094,99
+Quick Sort,Ascending,100,0.462,4950
+Merge Sort,Ascending,100,0.1059,316
+Insertion Sort,Descending,100,0.4607,4950
+Quick Sort,Descending,100,0.305,4950
+Merge Sort,Descending,100,0.1125,356
+Insertion Sort,Few Items,100,0.1634,2047
+Quick Sort,Few Items,100,0.1606,1328
+Merge Sort,Few Items,100,0.2916,521
+Insertion Sort,Random,500,5.551,60889
+Quick Sort,Random,500,0.4893,4408
+Merge Sort,Random,500,0.9937,3859
+Insertion Sort,Ascending,500,0.0515,499
+Quick Sort,Ascending,500,11.6046,124750
+Merge Sort,Ascending,500,0.6762,2216
+Insertion Sort,Descending,500,10.904,124750
+Quick Sort,Descending,500,8.5655,124750
+Merge Sort,Descending,500,0.6945,2272
+Insertion Sort,Few Items,500,4.6461,47962
+Quick Sort,Few Items,500,2.7395,26061
+Merge Sort,Few Items,500,0.9079,3647
+Insertion Sort,Random,1000,34.9436,254529
+Quick Sort,Random,1000,2.439,11171
+Merge Sort,Random,1000,3.237,8717
+Insertion Sort,Ascending,1000,0.1229,999
+Quick Sort,Ascending,1000,65.8362,499500
+Merge Sort,Ascending,1000,2.4367,4932
+Insertion Sort,Descending,1000,71.1251,499500
+Quick Sort,Descending,1000,48.9042,499500
+Merge Sort,Descending,1000,1.4936,5044
+Insertion Sort,Few Items,1000,23.2966,205449
+Quick Sort,Few Items,1000,11.1672,102707
+Merge Sort,Few Items,1000,2.2221,8238
+Insertion Sort,Random,2000,174.4583,1012350
+Quick Sort,Random,2000,4.2293,24124
+Merge Sort,Random,2000,6.8177,19433
+Insertion Sort,Ascending,2000,0.2461,1999
+Quick Sort,Ascending,2000,272.948,1999000
+Merge Sort,Ascending,2000,2.9149,10864
+Insertion Sort,Descending,2000,257.7343,1999000
+Quick Sort,Descending,2000,208.8766,1999000
+Merge Sort,Descending,2000,2.9697,11088
+Insertion Sort,Few Items,2000,98.1729,829706
+Quick Sort,Few Items,2000,101.795,402613
+Merge Sort,Few Items,2000,13.1991,18125
+Insertion Sort,Random,3000,318.9173,2248764
+Quick Sort,Random,3000,8.3502,38756
+Merge Sort,Random,3000,9.9919,30854
+Insertion Sort,Ascending,3000,0.3433,2999
+Quick Sort,Ascending,3000,579.0829,4498500
+Merge Sort,Ascending,3000,10.3796,16828
+Insertion Sort,Descending,3000,618.7114,4498500
+Quick Sort,Descending,3000,483.6992,4498500
+Merge Sort,Descending,3000,6.3835,18076
+Insertion Sort,Few Items,3000,285.0859,1802177
+Quick Sort,Few Items,3000,106.6727,905838
+Merge Sort,Few Items,3000,7.0214,28639
+Insertion Sort,Random,5000,1025.6379,6364260
+Quick Sort,Random,5000,10.2273,72163
+Merge Sort,Random,5000,19.348,55255
+Insertion Sort,Ascending,5000,1.5085,4999
+Quick Sort,Ascending,5000,1819.9602,12497500
+Merge Sort,Ascending,5000,10.0362,29804
+Insertion Sort,Descending,5000,1787.5656,12497500
+Quick Sort,Descending,5000,1318.4902,12497500
+Merge Sort,Descending,5000,11.9013,32004
+Insertion Sort,Few Items,5000,708.7734,5076151
+Quick Sort,Few Items,5000,407.6239,2511223
+Merge Sort,Few Items,5000,17.5404,51411
+Insertion Sort,Random,10000,4148.873,25023303
+Quick Sort,Random,10000,38.8488,153617
+Merge Sort,Random,10000,47.2341,120368
+Insertion Sort,Ascending,10000,1.8984,9999
+Quick Sort,Ascending,10000,8182.8774,49995000
+Merge Sort,Ascending,10000,27.3556,64608
+Insertion Sort,Descending,10000,8021.9864,49995000
+Quick Sort,Descending,10000,5738.5451,49995000
+Merge Sort,Descending,10000,21.5391,69008
+Insertion Sort,Few Items,10000,3050.5425,19875635
+Quick Sort,Few Items,10000,1575.2084,10030363
+Merge Sort,Few Items,10000,55.028,111150

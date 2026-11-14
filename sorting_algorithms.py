@@ -15,16 +15,6 @@ from typing import List, Any
 
 
 def insertion_sort(arr: List[Any]) -> List[Any]:
-    """
-    Standard Insertion Sort algorithm.
-    Complexity:
-    - Best Case (Ascending): O(n)
-    - Average Case (Random): O(n^2)
-    - Worst Case (Descending): O(n^2)
-
-    Returns:
-        sorted_list
-    """
     arr = list(arr)
     n = len(arr)
 
@@ -40,15 +30,6 @@ def insertion_sort(arr: List[Any]) -> List[Any]:
 
 
 def merge_sort(arr: List[Any]) -> List[Any]:
-    """
-    Standard Merge Sort algorithm (divide-and-conquer).
-
-    Complexity:
-    - Best, Average, Worst Case: Theta(n log n)
-
-    Returns:
-        sorted_list
-    """
     arr = list(arr)
 
     def _merge_sort(sub_arr: List[Any]) -> List[Any]:
@@ -79,19 +60,6 @@ def merge_sort(arr: List[Any]) -> List[Any]:
 
 
 def quick_sort(arr: List[Any]) -> List[Any]:
-    """
-    Standard Quick Sort algorithm using the Lomuto partition scheme.
-
-    Implemented using an explicit stack (iterative QuickSort) to avoid
-    Python recursion limit issues when handling large sorted/reverse arrays.
-
-    Complexity:
-    - Best / Average Case (Random): O(n log n)
-    - Worst Case (Ascending / Descending): O(n^2)
-
-    Returns:
-        sorted_list
-    """
     arr = list(arr)
     n = len(arr)
     if n <= 1:

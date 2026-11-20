@@ -59,6 +59,33 @@ def merge_sort(arr: List[Any]) -> List[Any]:
     return _merge_sort(arr)
 
 
+def quick_sort_recursive(arr: List[Any]) -> List[Any]:
+    """
+    Standard In-Place Recursive Quick Sort (Textbook Lomuto Scheme).
+    Ideal for conceptual understanding and pedagogical study.
+    """
+    arr = list(arr)
+
+    def _partition(low: int, high: int) -> int:
+        pivot = arr[high]
+        i = low
+        for j in range(low, high):
+            if arr[j] <= pivot:
+                arr[i], arr[j] = arr[j], arr[i]
+                i += 1
+        arr[i], arr[high] = arr[high], arr[i]
+        return i
+
+    def _quick_sort(low: int, high: int):
+        if low < high:
+            pi = _partition(low, high)
+            _quick_sort(low, pi - 1)
+            _quick_sort(pi + 1, high)
+
+    _quick_sort(0, len(arr) - 1)
+    return arr
+
+
 def quick_sort(arr: List[Any]) -> List[Any]:
     arr = list(arr)
     n = len(arr)
@@ -103,6 +130,7 @@ if __name__ == "__main__":
         assert insertion_sort(data) == expected, f"Insertion Sort failed on {name}"
         assert merge_sort(data) == expected, f"Merge Sort failed on {name}"
         assert quick_sort(data) == expected, f"Quick Sort failed on {name}"
+        assert quick_sort_recursive(data) == expected, f"Recursive Quick Sort failed on {name}"
         print(f"  [PASS] {name} ({len(data)} items)")
 
     print("\nAll pure sorting algorithms passed verification successfully!")

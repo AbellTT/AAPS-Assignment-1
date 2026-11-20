@@ -93,6 +93,36 @@ def merge_sort_counted(arr: List[Any]) -> Tuple[List[Any], int]:
     return _merge_sort(arr)
 
 
+def quick_sort_recursive_counted(arr: List[Any]) -> Tuple[List[Any], int]:
+    """
+    Recursive Quick Sort (Lomuto partition scheme) with comparison counting.
+    Ideal for conceptual study and tracing.
+    """
+    arr = list(arr)
+    comparisons = 0
+
+    def _partition(low: int, high: int) -> int:
+        nonlocal comparisons
+        pivot = arr[high]
+        i = low
+        for j in range(low, high):
+            comparisons += 1
+            if arr[j] <= pivot:
+                arr[i], arr[j] = arr[j], arr[i]
+                i += 1
+        arr[i], arr[high] = arr[high], arr[i]
+        return i
+
+    def _quick_sort(low: int, high: int):
+        if low < high:
+            pi = _partition(low, high)
+            _quick_sort(low, pi - 1)
+            _quick_sort(pi + 1, high)
+
+    _quick_sort(0, len(arr) - 1)
+    return arr, comparisons
+
+
 def quick_sort_counted(arr: List[Any]) -> Tuple[List[Any], int]:
     """
     Modified Quick Sort (Lomuto partition scheme) that counts element comparisons.
@@ -153,10 +183,13 @@ if __name__ == "__main__":
         res_i, comp_i = insertion_sort_counted(data)
         res_m, comp_m = merge_sort_counted(data)
         res_q, comp_q = quick_sort_counted(data)
+        res_qr, comp_qr = quick_sort_recursive_counted(data)
 
         assert res_i == expected, f"Insertion Sort failed on {name}"
         assert res_m == expected, f"Merge Sort failed on {name}"
         assert res_q == expected, f"Quick Sort failed on {name}"
+        assert res_qr == expected, f"Recursive Quick Sort failed on {name}"
+        assert comp_qr == comp_q, f"Recursive count mismatch: {comp_qr} vs {comp_q}"
 
         print(f"\n{name} (n={len(data)}):")
         print(f"  Insertion Sort comparisons: {comp_i}")

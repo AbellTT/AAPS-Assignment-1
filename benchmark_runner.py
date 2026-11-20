@@ -185,3 +185,4 @@ if __name__ == "__main__":
         test_sizes = DEFAULT_SIZES
 
     run_benchmarks(sizes=test_sizes, trials=args.trials, output_file=args.output)
+

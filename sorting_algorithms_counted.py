@@ -119,8 +119,12 @@ def quick_sort_recursive_counted(arr: List[Any]) -> Tuple[List[Any], int]:
             _quick_sort(low, pi - 1)
             _quick_sort(pi + 1, high)
 
-    _quick_sort(0, len(arr) - 1)
-    return arr, comparisons
+    try:
+        _quick_sort(0, len(arr) - 1)
+        return arr, comparisons
+    except RecursionError:
+        # Graceful fallback to stack implementation to prevent recursion crashes on large inputs
+        return quick_sort_counted(arr)
 
 
 def quick_sort_counted(arr: List[Any]) -> Tuple[List[Any], int]:

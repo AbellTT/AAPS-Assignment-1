@@ -82,8 +82,12 @@ def quick_sort_recursive(arr: List[Any]) -> List[Any]:
             _quick_sort(low, pi - 1)
             _quick_sort(pi + 1, high)
 
-    _quick_sort(0, len(arr) - 1)
-    return arr
+    try:
+        _quick_sort(0, len(arr) - 1)
+        return arr
+    except RecursionError:
+        # Graceful fallback to stack implementation to prevent recursion crashes on large inputs
+        return quick_sort(arr)
 
 
 def quick_sort(arr: List[Any]) -> List[Any]:

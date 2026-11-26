@@ -5,7 +5,8 @@ Assignment 1 - Standard Sorting Algorithms (Pure Implementation)
 This module implements the standard sorting algorithms without instrumentation overhead:
 1. Insertion Sort
 2. Merge Sort
-3. Quick Sort
+3. Quick Sort (Lomuto last-element pivot)
+4. Quick Sort M3 (Lomuto median-of-three pivot)
 
 Used for Part 1: Computing Running Time in Milliseconds (and Appendix A of the report).
 Each function returns the sorted list.
@@ -120,6 +121,84 @@ def quick_sort(arr: List[Any]) -> List[Any]:
     return arr
 
 
+def _median_of_three(arr: list, low: int, high: int) -> int:
+    """
+    Selects the median of arr[low], arr[mid], arr[high] as pivot,
+    places it at arr[high-1], and returns the pivot value.
+    Also sorts arr[low], arr[mid], arr[high] in-place as a side effect
+    so the three sentinel elements are already in position.
+    """
+    mid = (low + high) // 2
+    # Sort the three candidates into order: arr[low] <= arr[mid] <= arr[high]
+    if arr[low] > arr[mid]:
+        arr[low], arr[mid] = arr[mid], arr[low]
+    if arr[low] > arr[high]:
+        arr[low], arr[high] = arr[high], arr[low]
+    if arr[mid] > arr[high]:
+        arr[mid], arr[high] = arr[high], arr[mid]
+    # Median is now at arr[mid]; place it just before arr[high] (Lomuto convention)
+    arr[mid], arr[high - 1] = arr[high - 1], arr[mid]
+    return arr[high - 1]
+
+
+def quick_sort_m3(arr: List[Any]) -> List[Any]:
+    """
+    Quick Sort with Median-of-Three Pivot Selection (Lomuto partition scheme).
+
+    Pivot is chosen as the median of the first, middle, and last elements,
+    which eliminates worst-case O(n^2) behaviour on already-sorted and
+    reverse-sorted inputs. For sub-arrays of length <= 3 falls back to a
+    direct insertion-style sort so the median selection never under-indexes.
+
+    Uses an explicit stack to avoid Python recursion depth limits.
+    """
+    arr = list(arr)
+    n = len(arr)
+    if n <= 1:
+        return arr
+
+    stack = [(0, n - 1)]
+
+    while stack:
+        low, high = stack.pop()
+        length = high - low + 1
+
+        if length <= 1:
+            continue
+        elif length == 2:
+            if arr[low] > arr[high]:
+                arr[low], arr[high] = arr[high], arr[low]
+            continue
+        elif length == 3:
+            # Sort three elements directly
+            if arr[low] > arr[low + 1]:
+                arr[low], arr[low + 1] = arr[low + 1], arr[low]
+            if arr[low] > arr[high]:
+                arr[low], arr[high] = arr[high], arr[low]
+            if arr[low + 1] > arr[high]:
+                arr[low + 1], arr[high] = arr[high], arr[low + 1]
+            continue
+
+        # Median-of-three pivot placed at high-1
+        pivot = _median_of_three(arr, low, high)
+
+        # Lomuto partition on arr[low+1 .. high-2] (sentinels at low, high-1, high)
+        i = low + 1
+        for j in range(low + 1, high - 1):
+            if arr[j] <= pivot:
+                arr[i], arr[j] = arr[j], arr[i]
+                i += 1
+
+        # Place pivot into final position
+        arr[i], arr[high - 1] = arr[high - 1], arr[i]
+        pivot_idx = i
+
+        stack.append((low, pivot_idx - 1))
+        stack.append((pivot_idx + 1, high))
+
+    return arr
+
+
 if __name__ == "__main__":
     test_cases = {
         "Random": [8, 3, 10, 1, 7, 4, 9, 2, 6, 5],
@@ -135,6 +214,7 @@ if __name__ == "__main__":
         assert merge_sort(data) == expected, f"Merge Sort failed on {name}"
         assert quick_sort(data) == expected, f"Quick Sort failed on {name}"
         assert quick_sort_recursive(data) == expected, f"Recursive Quick Sort failed on {name}"
+        assert quick_sort_m3(data) == expected, f"Quick Sort M3 failed on {name}"
         print(f"  [PASS] {name} ({len(data)} items)")
 
     print("\nAll pure sorting algorithms passed verification successfully!")

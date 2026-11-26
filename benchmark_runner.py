@@ -8,6 +8,12 @@ This script automates:
 3. Measuring comparison counts using instrumented algorithms (sorting_algorithms_counted.py).
 4. Running multiple trials to eliminate CPU noise.
 5. Exporting all results to a structured CSV file (benchmark_results.csv) for plotting and report analysis.
+
+Algorithms benchmarked:
+- Insertion Sort
+- Quick Sort (Lomuto last-element pivot)
+- Quick Sort M3 (Lomuto median-of-three pivot)
+- Merge Sort
 """
 
 import sys
@@ -21,11 +27,13 @@ from sorting_algorithms import (
     insertion_sort,
     merge_sort,
     quick_sort,
+    quick_sort_m3,
 )
 from sorting_algorithms_counted import (
     insertion_sort_counted,
     merge_sort_counted,
     quick_sort_counted,
+    quick_sort_m3_counted,
 )
 
 # Standard experimental input sizes
@@ -93,6 +101,10 @@ def run_benchmarks(
         "Quick Sort": {
             "pure": quick_sort,
             "counted": quick_sort_counted,
+        },
+        "Quick Sort M3": {
+            "pure": quick_sort_m3,
+            "counted": quick_sort_m3_counted,
         },
         "Merge Sort": {
             "pure": merge_sort,

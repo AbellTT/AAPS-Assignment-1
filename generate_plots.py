@@ -2,23 +2,23 @@
 SWEG 5012: Advanced Algorithms and Problem Solving
 Assignment 1 - Step 3: High-Resolution Plot Generation (Clean Single-Graph Standard)
 
-This script reads benchmark_results.csv and produces exactly 34 standard linear plots:
-1. Part 1 Graphs (12 plots): Execution Time (ms) vs. Input Size (n)
-   for each Algorithm x Input Type combination.
-2. Part 2 Graphs (12 plots): Number of Comparisons vs. Input Size (n)
+This script reads benchmark_results.csv and produces 42 standard linear plots:
+1. Part 1 Graphs (16 plots): Execution Time (ms) vs. Input Size (n)
+   for each Algorithm x Input Type combination (4 algorithms x 4 input types).
+2. Part 2 Graphs (16 plots): Number of Comparisons vs. Input Size (n)
    for each Algorithm x Input Type combination.
 3. Comparative Overlay Graphs (8 plots): Direct head-to-head comparisons
-   of all 3 algorithms for each input type.
+   of Insertion Sort, Quick Sort M3, and Merge Sort for each input type.
+   - Uses Quick Sort M3 (median-of-three pivot) in comparative/dashboard views
+     because it represents the corrected, production-quality version of Quick Sort.
    - Solves the overlapping problem using concentric marker styling and dual-strip line rendering:
      * Insertion Sort: Thick solid red line (linewidth=3.8) with large squares (size=9, dark red border).
-     * Quick Sort: Medium dashed blue line (linewidth=2.0) with circles (size=5.5, white border).
-       When values are identical (e.g. Descending comparisons), the blue dashed line runs down the
-       center of the thick red line, and the blue circle sits centered inside the red square like a bullseye.
+     * Quick Sort M3: Medium dashed blue line (linewidth=2.0) with circles (size=5.5, white border).
      * Merge Sort: Dash-dot green line (linewidth=2.0) with triangles (size=7.5).
    - Includes an explicit data callout box at n = 10,000 for each algorithm.
 4. Master 2x2 Dashboards (2 plots):
-   - dashboard_running_time.png (Execution Time across all 4 input types)
-   - dashboard_comparisons.png (Comparison Counts across all 4 input types)
+   - dashboard_running_time.png (Execution Time across all 4 input types, using Quick Sort M3)
+   - dashboard_comparisons.png (Comparison Counts across all 4 input types, using Quick Sort M3)
 """
 
 import os
@@ -57,8 +57,9 @@ def plot_single(
     # Distinct color and marker per algorithm
     color_map = {
         "Insertion Sort": ("#d62728", "s", "#800000"),
-        "Quick Sort": ("#1f77b4", "o", "#0d47a1"),
-        "Merge Sort": ("#2ca02c", "^", "#1b5e20"),
+        "Quick Sort":     ("#1f77b4", "o", "#0d47a1"),
+        "Quick Sort M3":  ("#9467bd", "D", "#5c2d91"),
+        "Merge Sort":     ("#2ca02c", "^", "#1b5e20"),
     }
     color, marker, edge_color = color_map.get(algo, ("#333333", "o", "#000000"))
 
@@ -121,8 +122,8 @@ def plot_comparative_overlay(
     fig, ax = plt.subplots(figsize=(8.5, 5.5), dpi=300)
 
     ins = sub[sub["Algorithm"] == "Insertion Sort"].sort_values("Size (n)")
-    qs = sub[sub["Algorithm"] == "Quick Sort"].sort_values("Size (n)")
-    ms = sub[sub["Algorithm"] == "Merge Sort"].sort_values("Size (n)")
+    qs  = sub[sub["Algorithm"] == "Quick Sort M3"].sort_values("Size (n)")
+    ms  = sub[sub["Algorithm"] == "Merge Sort"].sort_values("Size (n)")
 
     # 1. Insertion Sort: Solid Crimson Line (thick) with large Square markers
     ax.plot(
@@ -140,20 +141,19 @@ def plot_comparative_overlay(
         zorder=2,
     )
 
-    # 2. Quick Sort: Dashed Cobalt Line with Circle markers (white border)
-    # When overlapping, the white border and smaller size let the red square show behind it!
+    # 2. Quick Sort M3: Dashed Purple Line with Diamond markers
     ax.plot(
         qs["Size (n)"],
         qs[metric],
-        color="#1f77b4",
+        color="#9467bd",
         linestyle=(0, (4, 3)),
         linewidth=2.0,
-        marker="o",
+        marker="D",
         markersize=5.5,
-        markerfacecolor="#1f77b4",
+        markerfacecolor="#9467bd",
         markeredgecolor="white",
         markeredgewidth=1.2,
-        label="Quick Sort",
+        label="Quick Sort M3",
         zorder=3,
     )
 
@@ -186,25 +186,23 @@ def plot_comparative_overlay(
 
     # Summary callout box at n = 10,000
     ins_10k = ins[ins["Size (n)"] == 10000][metric].values[0]
-    qs_10k = qs[qs["Size (n)"] == 10000][metric].values[0]
-    ms_10k = ms[ms["Size (n)"] == 10000][metric].values[0]
+    qs_10k  = qs[qs["Size (n)"] == 10000][metric].values[0]
+    ms_10k  = ms[ms["Size (n)"] == 10000][metric].values[0]
 
     if metric == "Time (ms)":
         box_text = (
             f"At n = 10,000:\n"
-            f"  Insertion Sort: {ins_10k:,.1f} ms\n"
-            f"  Quick Sort:     {qs_10k:,.1f} ms\n"
-            f"  Merge Sort:     {ms_10k:,.1f} ms"
+            f"  Insertion Sort:  {ins_10k:,.1f} ms\n"
+            f"  Quick Sort M3:   {qs_10k:,.1f} ms\n"
+            f"  Merge Sort:      {ms_10k:,.1f} ms"
         )
     else:
         box_text = (
             f"At n = 10,000:\n"
-            f"  Insertion Sort: {int(ins_10k):,} comps\n"
-            f"  Quick Sort:     {int(qs_10k):,} comps\n"
-            f"  Merge Sort:     {int(ms_10k):,} comps"
+            f"  Insertion Sort:  {int(ins_10k):,} comps\n"
+            f"  Quick Sort M3:   {int(qs_10k):,} comps\n"
+            f"  Merge Sort:      {int(ms_10k):,} comps"
         )
-        if itype == "Descending":
-            box_text += "\n* Insertion & Quick have identical counts: n(n-1)/2"
 
     ax.text(
         0.03,
@@ -236,8 +234,8 @@ def plot_dashboard(df: pd.DataFrame, metric: str, output_path: str):
         sub = df[df["Input Type"] == itype]
 
         ins = sub[sub["Algorithm"] == "Insertion Sort"].sort_values("Size (n)")
-        qs = sub[sub["Algorithm"] == "Quick Sort"].sort_values("Size (n)")
-        ms = sub[sub["Algorithm"] == "Merge Sort"].sort_values("Size (n)")
+        qs  = sub[sub["Algorithm"] == "Quick Sort M3"].sort_values("Size (n)")
+        ms  = sub[sub["Algorithm"] == "Merge Sort"].sort_values("Size (n)")
 
         # Insertion Sort
         ax.plot(
@@ -255,19 +253,19 @@ def plot_dashboard(df: pd.DataFrame, metric: str, output_path: str):
             zorder=2,
         )
 
-        # Quick Sort
+        # Quick Sort M3
         ax.plot(
             qs["Size (n)"],
             qs[metric],
-            color="#1f77b4",
+            color="#9467bd",
             linestyle=(0, (4, 3)),
             linewidth=1.8,
-            marker="o",
+            marker="D",
             markersize=4.5,
-            markerfacecolor="#1f77b4",
+            markerfacecolor="#9467bd",
             markeredgecolor="white",
             markeredgewidth=1.0,
-            label="Quick Sort",
+            label="Quick Sort M3",
             zorder=3,
         )
 
@@ -296,7 +294,7 @@ def plot_dashboard(df: pd.DataFrame, metric: str, output_path: str):
 
         if itype == "Descending" and metric == "Comparisons":
             ax.annotate(
-                "Insertion & Quick overlap: n(n-1)/2",
+                "Insertion & Quick Sort M3: both O(n log n) on descending",
                 xy=(0.03, 0.78),
                 xycoords="axes fraction",
                 fontsize=7.5,
@@ -318,15 +316,15 @@ def main():
     df = pd.read_csv(CSV_PATH)
     create_directories()
 
-    algorithms = ["Insertion Sort", "Quick Sort", "Merge Sort"]
+    algorithms = ["Insertion Sort", "Quick Sort", "Quick Sort M3", "Merge Sort"]
     input_types = ["Random", "Ascending", "Descending", "Few Items"]
 
     print("=" * 70)
-    print(" SWEG 5012: Generating 34 Clean Single Plots (Step 3)")
+    print(" SWEG 5012: Generating 42 Clean Single Plots (Step 3)")
     print("=" * 70)
 
-    # 1. Part 1: Individual Execution Time Plots (12 plots)
-    print("\n[1/4] Generating 12 Individual Execution Time Plots (Part 1)...")
+    # 1. Part 1: Individual Execution Time Plots (16 plots: 4 algos x 4 input types)
+    print("\n[1/4] Generating 16 Individual Execution Time Plots (Part 1)...")
     for algo in algorithms:
         algo_slug = algo.lower().replace(" ", "_")
         for itype in input_types:
@@ -335,8 +333,8 @@ def main():
             plot_single(df, algo, itype, "Time (ms)", out_file)
             print(f"  Created: {out_file}")
 
-    # 2. Part 2: Individual Comparison Count Plots (12 plots)
-    print("\n[2/4] Generating 12 Individual Comparison Count Plots (Part 2)...")
+    # 2. Part 2: Individual Comparison Count Plots (16 plots: 4 algos x 4 input types)
+    print("\n[2/4] Generating 16 Individual Comparison Count Plots (Part 2)...")
     for algo in algorithms:
         algo_slug = algo.lower().replace(" ", "_")
         for itype in input_types:
@@ -346,7 +344,8 @@ def main():
             print(f"  Created: {out_file}")
 
     # 3. Comparative Overlays (8 plots: 4 for Time, 4 for Comparisons)
-    print("\n[3/4] Generating 8 Clean Comparative Plots...")
+    # Uses Quick Sort M3 in comparative overlays (corrected production variant)
+    print("\n[3/4] Generating 8 Clean Comparative Plots (using Quick Sort M3)...")
     for itype in input_types:
         itype_slug = itype.lower().replace(" ", "_")
         time_out = os.path.join(OUTPUT_DIR, "comparative", f"compare_time_{itype_slug}.png")
@@ -356,8 +355,8 @@ def main():
         print(f"  Created: {time_out}")
         print(f"  Created: {comp_out}")
 
-    # 4. Master 2x2 Dashboards (2 plots)
-    print("\n[4/4] Generating 2 Master Dashboards...")
+    # 4. Master 2x2 Dashboards (2 plots, using Quick Sort M3)
+    print("\n[4/4] Generating 2 Master Dashboards (using Quick Sort M3)...")
     time_dash = os.path.join(OUTPUT_DIR, "dashboards", "dashboard_running_time.png")
     comp_dash = os.path.join(OUTPUT_DIR, "dashboards", "dashboard_comparisons.png")
     plot_dashboard(df, "Time (ms)", time_dash)
@@ -366,7 +365,7 @@ def main():
     print(f"  Created: {comp_dash}")
 
     print("\n" + "=" * 70)
-    print(f"[SUCCESS] All 34 figures generated cleanly in '{OUTPUT_DIR}/'!")
+    print(f"[SUCCESS] All 42 figures generated cleanly in '{OUTPUT_DIR}/'!")
     print("=" * 70)
 
 

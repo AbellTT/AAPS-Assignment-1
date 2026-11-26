@@ -5,7 +5,8 @@ Assignment 1 - Modified Sorting Algorithms for Comparison Counting
 This module implements sorting algorithms modified to count element comparisons:
 1. Insertion Sort
 2. Merge Sort
-3. Quick Sort
+3. Quick Sort (Lomuto last-element pivot)
+4. Quick Sort M3 (Lomuto median-of-three pivot)
 
 Used for Part 2: Counting the Number of Operations (and Appendix B of the report).
 Each function returns a tuple of (sorted_list, comparisons_count).
@@ -173,6 +174,85 @@ def quick_sort_counted(arr: List[Any]) -> Tuple[List[Any], int]:
     return arr, comparisons
 
 
+def quick_sort_m3_counted(arr: List[Any]) -> Tuple[List[Any], int]:
+    """
+    Quick Sort with Median-of-Three Pivot Selection, instrumented to count
+    element comparisons.
+
+    Counts comparisons between array elements in both the median-of-three
+    selection step and the Lomuto partition scan.
+
+    Complexity:
+    - Best / Average / Sorted inputs: O(n log n) comparisons (worst case avoided)
+
+    Returns:
+        (sorted_list, comparisons_count)
+    """
+    arr = list(arr)
+    n = len(arr)
+    if n <= 1:
+        return arr, 0
+
+    comparisons = 0
+
+    def _median_of_three_counted(low: int, high: int) -> int:
+        nonlocal comparisons
+        mid = (low + high) // 2
+        comparisons += 1
+        if arr[low] > arr[mid]:
+            arr[low], arr[mid] = arr[mid], arr[low]
+        comparisons += 1
+        if arr[low] > arr[high]:
+            arr[low], arr[high] = arr[high], arr[low]
+        comparisons += 1
+        if arr[mid] > arr[high]:
+            arr[mid], arr[high] = arr[high], arr[mid]
+        arr[mid], arr[high - 1] = arr[high - 1], arr[mid]
+        return arr[high - 1]
+
+    stack = [(0, n - 1)]
+
+    while stack:
+        low, high = stack.pop()
+        length = high - low + 1
+
+        if length <= 1:
+            continue
+        elif length == 2:
+            comparisons += 1
+            if arr[low] > arr[high]:
+                arr[low], arr[high] = arr[high], arr[low]
+            continue
+        elif length == 3:
+            comparisons += 1
+            if arr[low] > arr[low + 1]:
+                arr[low], arr[low + 1] = arr[low + 1], arr[low]
+            comparisons += 1
+            if arr[low] > arr[high]:
+                arr[low], arr[high] = arr[high], arr[low]
+            comparisons += 1
+            if arr[low + 1] > arr[high]:
+                arr[low + 1], arr[high] = arr[high], arr[low + 1]
+            continue
+
+        pivot = _median_of_three_counted(low, high)
+
+        i = low + 1
+        for j in range(low + 1, high - 1):
+            comparisons += 1
+            if arr[j] <= pivot:
+                arr[i], arr[j] = arr[j], arr[i]
+                i += 1
+
+        arr[i], arr[high - 1] = arr[high - 1], arr[i]
+        pivot_idx = i
+
+        stack.append((low, pivot_idx - 1))
+        stack.append((pivot_idx + 1, high))
+
+    return arr, comparisons
+
+
 if __name__ == "__main__":
     test_cases = {
         "Random": [8, 3, 10, 1, 7, 4, 9, 2, 6, 5],
@@ -188,17 +268,20 @@ if __name__ == "__main__":
         res_m, comp_m = merge_sort_counted(data)
         res_q, comp_q = quick_sort_counted(data)
         res_qr, comp_qr = quick_sort_recursive_counted(data)
+        res_m3, comp_m3 = quick_sort_m3_counted(data)
 
         assert res_i == expected, f"Insertion Sort failed on {name}"
         assert res_m == expected, f"Merge Sort failed on {name}"
         assert res_q == expected, f"Quick Sort failed on {name}"
         assert res_qr == expected, f"Recursive Quick Sort failed on {name}"
+        assert res_m3 == expected, f"Quick Sort M3 failed on {name}"
         assert comp_qr == comp_q, f"Recursive count mismatch: {comp_qr} vs {comp_q}"
 
         print(f"\n{name} (n={len(data)}):")
-        print(f"  Insertion Sort comparisons: {comp_i}")
-        print(f"  Merge Sort comparisons:     {comp_m}")
-        print(f"  Quick Sort comparisons:     {comp_q}")
+        print(f"  Insertion Sort comparisons:    {comp_i}")
+        print(f"  Merge Sort comparisons:        {comp_m}")
+        print(f"  Quick Sort comparisons:        {comp_q}")
+        print(f"  Quick Sort M3 comparisons:     {comp_m3}")
 
     print("\nAll modified algorithms passed verification successfully!")
 

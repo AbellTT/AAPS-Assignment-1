@@ -292,16 +292,37 @@ def plot_dashboard(df: pd.DataFrame, metric: str, output_path: str):
         ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: f"{int(x):,}"))
         ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda y, p: f"{int(y):,}" if y >= 1 else f"{y:.2f}"))
 
-        if itype == "Descending" and metric == "Comparisons":
-            ax.annotate(
-                "Insertion & Quick Sort M3: both O(n log n) on descending",
-                xy=(0.03, 0.78),
-                xycoords="axes fraction",
-                fontsize=7.5,
-                bbox=dict(boxstyle="round,pad=0.3", fc="#fff9e6", ec="#e6b800", lw=0.8),
+        # Summary callout box at n = 10,000
+        ins_10k = ins[ins["Size (n)"] == 10000][metric].values[0]
+        qs_10k  = qs[qs["Size (n)"] == 10000][metric].values[0]
+        ms_10k  = ms[ms["Size (n)"] == 10000][metric].values[0]
+
+        if metric == "Time (ms)":
+            box_text = (
+                f"At n = 10,000:\n"
+                f"  Ins Sort:  {ins_10k:,.1f} ms\n"
+                f"  QS M3:     {qs_10k:,.1f} ms\n"
+                f"  Merge:     {ms_10k:,.1f} ms"
+            )
+        else:
+            box_text = (
+                f"At n = 10,000:\n"
+                f"  Ins Sort:  {int(ins_10k):,}\n"
+                f"  QS M3:     {int(qs_10k):,}\n"
+                f"  Merge:     {int(ms_10k):,}"
             )
 
-        ax.legend(loc="upper left", frameon=True, fontsize=8.5)
+        ax.text(
+            0.03, 0.97,
+            box_text,
+            transform=ax.transAxes,
+            fontsize=7.5,
+            family="monospace",
+            verticalalignment="top",
+            bbox=dict(boxstyle="round,pad=0.4", fc="#f8f9fa", ec="#cccccc", lw=0.8),
+        )
+
+        ax.legend(loc="upper left", frameon=True, fontsize=8.5, bbox_to_anchor=(0.03, 0.72))
 
     plt.tight_layout(rect=[0, 0, 1, 0.96])
     plt.savefig(output_path)
